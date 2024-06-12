@@ -6,6 +6,7 @@ import { Line } from 'react-chartjs-2';
 import '../lib/chartSetup';
 import { PopulationData } from '@/types/Type';
 import { regions } from '@/lib/region';
+import { getRandomColor } from '@/constants/ColorCode';
 
 export default function Home() {
   const [prefectures, setPrefectures] = useState<any[]>([]);
@@ -13,7 +14,11 @@ export default function Home() {
   const [populationData, setPopulationData] = useState<{
     [key: number]: PopulationData;
   }>({});
+  const [prefectureColors, setPrefectureColors] = useState<{
+    [key: number]: string;
+  }>({});
   const [years, setYears] = useState<number[]>([]);
+  const [populationType, setPopulationType] = useState<string>('総人口');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,6 +34,16 @@ export default function Home() {
     fetchPrefectures();
   }, []);
 
+  useEffect(() => {
+    const currentYear = new Date().getFullYear();
+    const startYear = 1960;
+    const yearRange = [];
+    for (let year = startYear; year <= currentYear; year += 5) {
+      yearRange.push(year);
+    }
+    setYears(yearRange);
+  }, []);
+
   const handlePrefectureChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -37,6 +52,12 @@ export default function Home() {
       prefectures.find((pref) => pref.prefCode === prefCode)?.prefName || '';
     if (event.target.checked) {
       setSelectedPrefectures([...selectedPrefectures, prefCode]);
+      if (!prefectureColors[prefCode]) {
+        setPrefectureColors((prevColors) => ({
+          ...prevColors,
+          [prefCode]: getRandomColor(),
+        }));
+      }
       try {
         const data = await getPopulationData(prefCode, '総人口');
         setPopulationData((prevData) => ({
@@ -61,17 +82,49 @@ export default function Home() {
     }
   };
 
-  const dataSets = Object.keys(populationData).map((prefCode) => ({
-    label: populationData[Number(prefCode)].name,
-    data: populationData[Number(prefCode)].data.map((item) => item.value),
-    borderColor: 'rgba(75, 192, 192, 1)',
-    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-  }));
+  const handlePopulationTypeChange = async (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const selectedType = event.target.value;
+    setPopulationType(selectedType);
+
+    const updatedPopulationData = await Promise.all(
+      selectedPrefectures.map(async (prefCode) => {
+        const prefName =
+          prefectures.find((pref) => pref.prefCode === prefCode)?.prefName ||
+          '';
+        const data = await getPopulationData(prefCode, selectedType);
+        return { prefCode, prefName, data };
+      })
+    );
+
+    const newPopulationData: { [key: number]: PopulationData } = {};
+    updatedPopulationData.forEach(({ prefCode, prefName, data }) => {
+      newPopulationData[prefCode] = { name: prefName, data };
+    });
+    setPopulationData(newPopulationData);
+  };
+
+  const dataSets = Object.keys(populationData).map((prefCode) => {
+    const color = prefectureColors[Number(prefCode)];
+    return {
+      label: populationData[Number(prefCode)].name,
+      data: populationData[Number(prefCode)].data.map((item) => item.value),
+      borderColor: color,
+      backgroundColor: color + '33',
+    };
+  });
 
   return (
     <div>
       <h1>都道府県別総人口推移</h1>
       {error && <p>{error}</p>}
+      <select onChange={handlePopulationTypeChange} value={populationType}>
+        <option value='総人口'>総人口</option>
+        <option value='年少人口'>年少人口</option>
+        <option value='生産年齢人口'>生産年齢人口</option>
+        <option value='老年人口'>老年人口</option>
+      </select>
       {Object.keys(regions).map((region) => (
         <div key={region}>
           <h2>{region}</h2>
@@ -96,7 +149,16 @@ export default function Home() {
       <Line
         data={{
           labels: years,
-          datasets: dataSets,
+          datasets: dataSets.length
+            ? dataSets
+            : [
+                {
+                  label: '',
+                  data: [],
+                  borderColor: 'rgba(0, 0, 0, 0)',
+                  backgroundColor: 'rgba(0, 0, 0, 0)',
+                },
+              ],
         }}
       />
     </div>
