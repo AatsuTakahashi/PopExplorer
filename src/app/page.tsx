@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import '../lib/chartSetup';
 import { PopulationData } from '@/types/Type';
+import { regions } from '@/lib/region';
 
 export default function Home() {
   const [prefectures, setPrefectures] = useState<any[]>([]);
@@ -71,18 +72,27 @@ export default function Home() {
     <div>
       <h1>都道府県別総人口推移</h1>
       {error && <p>{error}</p>}
-      <div>
-        {prefectures.map((prefecture) => (
-          <div key={prefecture.prefCode}>
-            <input
-              type='checkbox'
-              value={prefecture.prefCode}
-              onChange={handlePrefectureChange}
-            />
-            <label>{prefecture.prefName}</label>
-          </div>
-        ))}
-      </div>
+      {Object.keys(regions).map((region) => (
+        <div key={region}>
+          <h2>{region}</h2>
+          {regions[region].map((prefCode) => {
+            const prefecture = prefectures.find(
+              (pref) => pref.prefCode === prefCode
+            );
+            if (!prefecture) return null;
+            return (
+              <div key={prefecture.prefCode}>
+                <input
+                  type='checkbox'
+                  value={prefecture.prefCode}
+                  onChange={handlePrefectureChange}
+                />
+                <label>{prefecture.prefName}</label>
+              </div>
+            );
+          })}
+        </div>
+      ))}
       <Line
         data={{
           labels: years,

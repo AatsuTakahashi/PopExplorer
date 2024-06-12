@@ -30,3 +30,7 @@ export interface PopulationData {
   name: string;
   data: { year: number; value: number }[];
 }
+
+export interface Regions {
+  [key: string]: number[];
+}
