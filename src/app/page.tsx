@@ -144,22 +144,24 @@ export default function Home() {
       {Object.keys(regions).map((region) => (
         <div key={region} className='region-container'>
           <h2>{region}</h2>
-          {regions[region].map((prefCode) => {
-            const prefecture = prefectures.find(
-              (pref) => pref.prefCode === prefCode
-            );
-            if (!prefecture) return null;
-            return (
-              <div key={prefecture.prefCode} className='prefecture'>
-                <input
-                  type='checkbox'
-                  value={prefecture.prefCode}
-                  onChange={handlePrefectureChange}
-                />
-                <label>{prefecture.prefName}</label>
-              </div>
-            );
-          })}
+          <div className='prefecture-container'>
+            {regions[region].map((prefCode) => {
+              const prefecture = prefectures.find(
+                (pref) => pref.prefCode === prefCode
+              );
+              if (!prefecture) return null;
+              return (
+                <div key={prefecture.prefCode} className='prefecture'>
+                  <input
+                    type='checkbox'
+                    value={prefecture.prefCode}
+                    onChange={handlePrefectureChange}
+                  />
+                  <label>{prefecture.prefName}</label>
+                </div>
+              );
+            })}
+          </div>
         </div>
       ))}
       <Line
