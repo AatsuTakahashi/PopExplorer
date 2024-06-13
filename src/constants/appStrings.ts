@@ -8,4 +8,5 @@ export const POPULATION_TYPE = {
 export const ERROR_MESSAGE = {
   PREFECTURE_DATA: '都道府県データの取得に失敗しました',
   POPULATION_DATA: '人口データの取得に失敗しました',
+  API: 'API request failed',
 };

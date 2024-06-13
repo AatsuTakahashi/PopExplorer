@@ -6,6 +6,7 @@ import {
   PrefecturesResponse,
 } from '@/types/Type';
 import apiClient from './api';
+import { ERROR_MESSAGE, POPULATION_TYPE } from '@/constants/appStrings';
 
 export const getPrefectures = async (): Promise<Prefecture[]> => {
   const response = await apiClient.get<PrefecturesResponse>('/prefectures');
@@ -29,34 +30,34 @@ export const getPopulationData = async (
     let populationData: PopulationDataSet | undefined;
 
     switch (populationType) {
-      case '年少人口':
+      case POPULATION_TYPE.YOUNG:
         populationData = data.find(
-          (d: PopulationDataSet) => d.label === '年少人口'
+          (d: PopulationDataSet) => d.label === POPULATION_TYPE.YOUNG
         );
         break;
-      case '生産年齢人口':
+      case POPULATION_TYPE.WORKING:
         populationData = data.find(
-          (d: PopulationDataSet) => d.label === '生産年齢人口'
+          (d: PopulationDataSet) => d.label === POPULATION_TYPE.WORKING
         );
         break;
-      case '老年人口':
+      case POPULATION_TYPE.ELDERLY:
         populationData = data.find(
-          (d: PopulationDataSet) => d.label === '老年人口'
+          (d: PopulationDataSet) => d.label === POPULATION_TYPE.ELDERLY
         );
         break;
       default:
         populationData = data.find(
-          (d: PopulationDataSet) => d.label === '総人口'
+          (d: PopulationDataSet) => d.label === POPULATION_TYPE.TOTAL
         );
         break;
     }
 
     if (!populationData) {
-      throw new Error('Population data not found');
+      throw new Error(ERROR_MESSAGE.POPULATION_DATA);
     }
     return populationData.data;
   } catch (error) {
-    console.error('API request failed:', error); // デバッグ用
+    console.error(ERROR_MESSAGE.API, error);
     throw error;
   }
 };

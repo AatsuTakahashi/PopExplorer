@@ -1,3 +1,14 @@
 {
-  "ignoreWords": ["RESAS", "chartjs"]
+  "ignoreWords": [
+    "RESAS",
+    "chartjs",
+    "HOKKAIDO",
+    "TOHOKU",
+    "KANTO",
+    "CHUBU",
+    "KINKI",
+    "CHUGOKU",
+    "SHIKOKU",
+    "KYUSHU"
+  ]
 }

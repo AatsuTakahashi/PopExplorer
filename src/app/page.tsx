@@ -12,6 +12,7 @@ import {
   POPULATION_PREFECTURES,
   POPULATION_TYPE,
 } from '@/constants/appStrings';
+import '../styles/displayPrefecture.css';
 
 export default function Home() {
   const [prefectures, setPrefectures] = useState<any[]>([]);
@@ -126,7 +127,11 @@ export default function Home() {
     <div>
       <h1>{POPULATION_PREFECTURES}</h1>
       {error && <p>{error}</p>}
-      <select onChange={handlePopulationTypeChange} value={populationType}>
+      <select
+        onChange={handlePopulationTypeChange}
+        value={populationType}
+        className='select-box'
+      >
         <option value={POPULATION_TYPE.TOTAL}>{POPULATION_TYPE.TOTAL}</option>
         <option value={POPULATION_TYPE.YOUNG}>{POPULATION_TYPE.YOUNG}</option>
         <option value={POPULATION_TYPE.WORKING}>
@@ -137,7 +142,7 @@ export default function Home() {
         </option>
       </select>
       {Object.keys(regions).map((region) => (
-        <div key={region}>
+        <div key={region} className='region-container'>
           <h2>{region}</h2>
           {regions[region].map((prefCode) => {
             const prefecture = prefectures.find(
@@ -145,7 +150,7 @@ export default function Home() {
             );
             if (!prefecture) return null;
             return (
-              <div key={prefecture.prefCode}>
+              <div key={prefecture.prefCode} className='prefecture'>
                 <input
                   type='checkbox'
                   value={prefecture.prefCode}
