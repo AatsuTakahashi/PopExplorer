@@ -6,7 +6,12 @@ import { Line } from 'react-chartjs-2';
 import '../lib/chartSetup';
 import { PopulationData } from '@/types/Type';
 import { regions } from '@/lib/region';
-import { getRandomColor } from '@/constants/ColorCode';
+import { COLOR_CODE, getRandomColor } from '@/constants/ColorCode';
+import {
+  ERROR_MESSAGE,
+  POPULATION_PREFECTURES,
+  POPULATION_TYPE,
+} from '@/constants/appStrings';
 
 export default function Home() {
   const [prefectures, setPrefectures] = useState<any[]>([]);
@@ -18,7 +23,9 @@ export default function Home() {
     [key: number]: string;
   }>({});
   const [years, setYears] = useState<number[]>([]);
-  const [populationType, setPopulationType] = useState<string>('総人口');
+  const [populationType, setPopulationType] = useState<string>(
+    POPULATION_TYPE.TOTAL
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,7 +34,7 @@ export default function Home() {
         const prefecturesData = await getPrefectures();
         setPrefectures(prefecturesData);
       } catch (error) {
-        setError('都道府県データの取得に失敗しました');
+        setError(ERROR_MESSAGE.PREFECTURE_DATA);
       }
     };
 
@@ -59,7 +66,7 @@ export default function Home() {
         }));
       }
       try {
-        const data = await getPopulationData(prefCode, '総人口');
+        const data = await getPopulationData(prefCode, POPULATION_TYPE.TOTAL);
         setPopulationData((prevData) => ({
           ...prevData,
           [prefCode]: { name: prefName, data },
@@ -68,7 +75,7 @@ export default function Home() {
           setYears(data.map((item) => item.year));
         }
       } catch (err) {
-        console.error('人口データの取得に失敗しました', err);
+        console.error(ERROR_MESSAGE.POPULATION_DATA, err);
       }
     } else {
       setSelectedPrefectures(
@@ -117,13 +124,17 @@ export default function Home() {
 
   return (
     <div>
-      <h1>都道府県別総人口推移</h1>
+      <h1>{POPULATION_PREFECTURES}</h1>
       {error && <p>{error}</p>}
       <select onChange={handlePopulationTypeChange} value={populationType}>
-        <option value='総人口'>総人口</option>
-        <option value='年少人口'>年少人口</option>
-        <option value='生産年齢人口'>生産年齢人口</option>
-        <option value='老年人口'>老年人口</option>
+        <option value={POPULATION_TYPE.TOTAL}>{POPULATION_TYPE.TOTAL}</option>
+        <option value={POPULATION_TYPE.YOUNG}>{POPULATION_TYPE.YOUNG}</option>
+        <option value={POPULATION_TYPE.WORKING}>
+          {POPULATION_TYPE.WORKING}
+        </option>
+        <option value={POPULATION_TYPE.ELDERLY}>
+          {POPULATION_TYPE.ELDERLY}
+        </option>
       </select>
       {Object.keys(regions).map((region) => (
         <div key={region}>
@@ -155,8 +166,8 @@ export default function Home() {
                 {
                   label: '',
                   data: [],
-                  borderColor: 'rgba(0, 0, 0, 0)',
-                  backgroundColor: 'rgba(0, 0, 0, 0)',
+                  borderColor: COLOR_CODE.TRANSPARENT,
+                  backgroundColor: COLOR_CODE.TRANSPARENT,
                 },
               ],
         }}

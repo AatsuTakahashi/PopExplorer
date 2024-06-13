@@ -7,4 +7,6 @@ export const getRandomColor = () => {
   return color;
 };
 
-export const COLOR_CODE = [];
+export const COLOR_CODE = {
+  TRANSPARENT: 'rgba(0, 0, 0, 0)',
+};
