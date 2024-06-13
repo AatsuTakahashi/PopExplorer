@@ -130,7 +130,7 @@ export default function Home() {
       <select
         onChange={handlePopulationTypeChange}
         value={populationType}
-        className='select-box'
+        className="select-box"
       >
         <option value={POPULATION_TYPE.TOTAL}>{POPULATION_TYPE.TOTAL}</option>
         <option value={POPULATION_TYPE.YOUNG}>{POPULATION_TYPE.YOUNG}</option>
@@ -142,18 +142,18 @@ export default function Home() {
         </option>
       </select>
       {Object.keys(regions).map((region) => (
-        <div key={region} className='region-container'>
+        <div key={region} className="region-container">
           <h2>{region}</h2>
-          <div className='prefecture-container'>
+          <div className="prefecture-container">
             {regions[region].map((prefCode) => {
               const prefecture = prefectures.find(
                 (pref) => pref.prefCode === prefCode
               );
               if (!prefecture) return null;
               return (
-                <div key={prefecture.prefCode} className='prefecture'>
+                <div key={prefecture.prefCode} className="prefecture">
                   <input
-                    type='checkbox'
+                    type="checkbox"
                     value={prefecture.prefCode}
                     onChange={handlePrefectureChange}
                   />
