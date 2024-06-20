@@ -4,9 +4,9 @@ import {
   PopulationResponse,
   Prefecture,
   PrefecturesResponse,
-} from '@/types/Type';
+} from '../types/Type';
 import apiClient from './api';
-import { ERROR_MESSAGE, POPULATION_TYPE } from '@/constants/appStrings';
+import { ERROR_MESSAGE, POPULATION_TYPE } from '../constants/appStrings';
 
 export const getPrefectures = async (): Promise<Prefecture[]> => {
   const response = await apiClient.get<PrefecturesResponse>('/prefectures');
