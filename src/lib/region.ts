@@ -1,4 +1,4 @@
-import { Regions } from '@/types/Type';
+import { Regions } from '../types/Type';
 
 export const regions: Regions = {
   北海道: [1],
